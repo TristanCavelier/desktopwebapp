@@ -120,6 +120,8 @@ function writeFile(path, req, res) {
     });
     req.on("end", function () {
       fs.close(fd);
+      res.writeHead(204, CORS);
+      res.end();
     });
   });
 }
