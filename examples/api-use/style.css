@@ -1,0 +1,9 @@
+html {
+    min-height: 100%;
+}
+body {
+    background: linear-gradient(to bottom, #E2E0DE 0%, #C2BBB8 100%); /* qt look */
+}
+textarea {
+    font-family: Monospace;
+}
