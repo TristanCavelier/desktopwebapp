@@ -1,0 +1,19 @@
+[Desktop Entry]
+Comment[en_US]=Using DesktopWebApp
+Comment=Using DesktopWebApp
+Exec=/usr/bin/desktopwebapp /opt/myapp/index.html
+GenericName[en_US]=Using DesktopWebApp
+GenericName=Using DesktopWebApp
+Icon=exec
+MimeType=
+Name[en_US]=myapp
+Name=myapp
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
