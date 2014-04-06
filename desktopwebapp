@@ -1,0 +1,64 @@
+#!/bin/bash
+# Copyright (c) 2014 Tristan Cavelier <t.cavelier@free.fr>
+# This program is free software. It comes without any warranty, to
+# the extent permitted by applicable law. You can redistribute it
+# and/or modify it under the terms of the Do What The Fuck You Want
+# To Public License, Version 2, as published by Sam Hocevar. See
+# the COPYING file for more details.
+
+cmd=$(basename "$0")
+usage="Usage:
+    $cmd <app.html>"
+
+apppath=$(realpath "$1")
+[ ! -e "$apppath" ] && echo "$usage" && exit 1
+
+#here=$(dirname "$0")
+lib=/usr/lib/desktopwebapp
+
+cd /
+
+node "$lib"/noderestfs.server.js &
+pid=$!
+if [ $pid -le 1024 ] ; then
+    port=$(($pid + 32768))
+else
+    port=$pid
+fi
+
+cd -
+
+arg-to-js-array() {
+    # print a string that is wrapped by quotes
+    # js_quote lol
+    local res
+    local tmp
+    if [ $# != 0 ] ; then
+        res=${1//\\/\\\\}
+        res='"'${res//\"/\\\"}'"'
+        shift
+    fi
+    while [ $# != 0 ] ; do
+        tmp=${1//\\/\\\\}
+        tmp='"'${tmp//\"/\\\"}'"'
+        res="$res, $tmp"
+        shift
+    done
+    echo "[$res]"
+}
+
+tmpfile=$(mktemp)
+echo "
+window.argv = $(arg-to-js-array "${@:2}");
+window.env = {};
+window.env.NODEREST_HOSTNAME = \"localhost\";
+window.env.NODEREST_PORT = $port;
+" > "$tmpfile"
+printenv | sed 's,\([\\"]\),\\\1,g' | \
+    sed 's,\([^=]\+\)=\(.*\),window.env["\1"] = "\2";,g' >> "$tmpfile"
+cat "$lib"/noderestfs.api.js >> "$tmpfile"
+
+surf -r "$tmpfile" -n "$apppath"
+kill %1
+
+rm "$tmpfile"
